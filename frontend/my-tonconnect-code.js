@@ -1,6 +1,7 @@
 window.addEventListener('DOMContentLoaded', function() {
 const btn = document.getElementById('ton-connect-btn');
 const walletDiv = document.getElementById('wallet-address');
+const sendTxBtn = document.getElementById('send-transaction-btn');
 
 let tonConnectUI;
 
@@ -42,11 +43,17 @@ btn.onclick = () => {
                 walletDiv.innerText = 'Адрес: ' + userFriendly + '\nЗагрузка баланса...';
                 const balance = await getUSDTBalance(rawAddress); // используем raw-адрес для API
                 walletDiv.innerText = `Адрес: ${userFriendly}\nUSDT: ${balance}`;
+                sendTxBtn.style.display = '';
             } else {
                 walletDiv.innerText = '';
+                sendTxBtn.style.display = 'none';
             }
         });
     }
     tonConnectUI.openModal();
+};
+
+sendTxBtn.onclick = () => {
+    alert('В будущем здесь будет отправка транзакции!');
 };
 }); 
