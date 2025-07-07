@@ -1,5 +1,5 @@
 import { TonClient, toNano } from "@ton/ton";
-import { DEX, pTON } from "@ston-fi/sdk";
+import { DEX, pTON, pTON_VERSION } from "@ston-fi/sdk";
 import fs from "fs";
 
 const userWalletAddress = process.argv[2];
@@ -15,6 +15,7 @@ const router = client.open(
   )
 );
 
+console.log("pTON:", pTON); // Диагностика структуры pTON
 const proxyTon = pTON.v2_1.create("kQACS30DNoUQ7NfApPvzh7eBmSZ9L4ygJ-lkNWtba8TQT-Px");
 
 function logToFile(message) {
