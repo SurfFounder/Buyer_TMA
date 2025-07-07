@@ -71,7 +71,7 @@ sendTxBtn.onclick = async () => {
     try {
         const rawAddress = tonConnectUI.account.address;
         // Получаем параметры swap с backend
-        const resp = await fetch("http://localhost:8000/swap/jetton-to-ton", {
+        const resp = await fetch("http://localhost:8000/swap/ton-to-jetton", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
