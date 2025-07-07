@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import json as pyjson
+import os
 
 app = FastAPI()
 
@@ -22,9 +23,10 @@ async def swap_ton_to_jetton(request: Request):
     data = await request.json()
     user_address = data["user_address"]
     amount = data["amount"]  # строка, например "1"
+    swap_js_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ton-swap', 'swap.js'))
     result = subprocess.run(
         [
-            "node", "ton-swap/swap.js", user_address, amount
+            "node", swap_js_path, user_address, amount
         ],
         capture_output=True, text=True
     )
