@@ -15,9 +15,7 @@ const router = client.open(
   )
 );
 
-const proxyTon = client.open(
-  pTON.v2_1.create("kQACS30DNoUQ7NfApPvzh7eBmSZ9L4ygJ-lkNWtba8TQT-Px")
-);
+const proxyTon = pTON.v2_1.create("kQACS30DNoUQ7NfApPvzh7eBmSZ9L4ygJ-lkNWtba8TQT-Px");
 
 function logToFile(message) {
   fs.appendFileSync("swap.log", `[${new Date().toISOString()}] ${message}\n`);
