@@ -1,3 +1,4 @@
+window.addEventListener('DOMContentLoaded', function() {
 const btn = document.getElementById('ton-connect-btn');
 const walletDiv = document.getElementById('wallet-address');
 
@@ -47,4 +48,5 @@ btn.onclick = () => {
         });
     }
     tonConnectUI.openModal();
-}; 
+};
+}); 
