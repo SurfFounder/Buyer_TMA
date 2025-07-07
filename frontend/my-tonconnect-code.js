@@ -36,11 +36,10 @@ btn.onclick = () => {
         tonConnectUI.uiOptions = { language: 'ru' };
         tonConnectUI.onStatusChange(async wallet => {
             if (wallet && wallet.account) {
-                // Преобразуем raw-адрес в user-friendly для отображения
-                const address = wallet.account.address;
-                const userFriendly = toUserFriendly(address);
+                const rawAddress = wallet.account.address; // raw (0:...)
+                const userFriendly = toUserFriendly(rawAddress);
                 walletDiv.innerText = 'Адрес: ' + userFriendly + '\nЗагрузка баланса...';
-                const balance = await getUSDTBalance(userFriendly);
+                const balance = await getUSDTBalance(rawAddress); // используем raw-адрес для API
                 walletDiv.innerText = `Адрес: ${userFriendly}\nUSDT: ${balance}`;
             } else {
                 walletDiv.innerText = '';
