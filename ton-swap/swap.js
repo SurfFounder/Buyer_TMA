@@ -36,12 +36,6 @@ async function main() {
     
     logToFile("Получен список активов: " + assetList.length);
     
-    // Отладка: выводим все активы
-    console.log("Доступные активы:");
-    assetList.forEach((asset, index) => {
-      console.log(`${index}: ${asset.meta?.symbol || asset.meta?.displayName || 'Unknown'} - kind: ${asset.kind} - address: ${asset.contractAddress}`);
-    });
-    
     // 3. Находим TON и USDT
     const tonAsset = assetList.find(asset => 
       asset.kind === 'Ton' || 
@@ -56,17 +50,10 @@ async function main() {
       asset.contractAddress === 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs'
     );
     
-    console.log("TON asset found:", tonAsset ? `${tonAsset.meta?.symbol || tonAsset.kind}` : 'NOT FOUND');
-    console.log("USDT asset found:", usdtAsset ? `${usdtAsset.meta?.symbol}` : 'NOT FOUND');
-    
     if (!tonAsset || !usdtAsset) {
       // Попробуем взять первые два доступных актива для тестирования
       const firstAsset = assetList[0];
       const secondAsset = assetList[1];
-      
-      console.log("Используем первые два доступных актива:");
-      console.log("First asset:", firstAsset?.meta?.symbol || firstAsset?.meta?.displayName);
-      console.log("Second asset:", secondAsset?.meta?.symbol || secondAsset?.meta?.displayName);
       
       if (!firstAsset || !secondAsset) {
         throw new Error("Недостаточно активов для swap");
@@ -78,7 +65,6 @@ async function main() {
       
       logToFile(`Используем активы: ${fromAsset.meta?.symbol} -> ${toAsset.meta?.symbol}`);
       
-      // Продолжаем с этими активами
       const fromDecimals = 10 ** (fromAsset.meta?.decimals ?? 9);
       const offerUnits = (Number(offerAmount) * fromDecimals).toString();
       
@@ -151,19 +137,13 @@ async function main() {
           expectedOutput: (Number(simulationResult.minAskUnits) / (10 ** (toAsset.meta?.decimals ?? 9))).toFixed(6)
         }
       };
-      
-      // === РЕКОМЕНДАЦИЯ: используйте RPC Validator для проверки параметров swap ===
-      // Перейдите на https://tokenecosystemrpc.netlify.app/ и вставьте значения ниже для валидации маршрутизации, газа и сборов.
-      console.log("=== Для проверки в RPC Validator ===");
+      // === Для проверки в RPC Validator ===
       console.log("To:", result.to);
       console.log("Value:", result.value);
       console.log("Body (base64):", result.body);
-      console.log("--- Полный результат для интеграции ---");
       console.log(JSON.stringify(result, null, 2));
       return;
     }
-    
-    logToFile("Найдены активы: TON и USDT");
     
     // 4. Конвертируем amount в правильные единицы
     const tonDecimals = 10 ** (tonAsset.meta?.decimals ?? 9);
@@ -215,14 +195,10 @@ async function main() {
         expectedOutput: (Number(simulationResult.minAskUnits) / (10 ** (usdtAsset.meta?.decimals ?? 6))).toFixed(6)
       }
     };
-
-    // === РЕКОМЕНДАЦИЯ: используйте RPC Validator для проверки параметров swap ===
-    // Перейдите на https://tokenecosystemrpc.netlify.app/ и вставьте значения ниже для валидации маршрутизации, газа и сборов.
-    console.log("=== Для проверки в RPC Validator ===");
+    // === Для проверки в RPC Validator ===
     console.log("To:", result.to);
     console.log("Value:", result.value);
     console.log("Body (base64):", result.body);
-    console.log("--- Полный результат для интеграции ---");
     console.log(JSON.stringify(result, null, 2));
     
   } catch (e) {
