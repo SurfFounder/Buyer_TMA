@@ -8,6 +8,7 @@ async function getUSDTBalance(address) {
     const response = await fetch(`https://tonapi.io/v2/accounts/${address}/jettons`);
     if (!response.ok) return "Ошибка API";
     const data = await response.json();
+    console.log('TONAPI RESPONSE:', data);
     if (!data.balances) return "Нет данных";
     const usdtJettonAddress = "EQCkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
     const usdt = data.balances.find(j => j.jetton.address === usdtJettonAddress);
