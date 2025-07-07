@@ -19,8 +19,10 @@ const proxyTon = pTON.v2_1.create(
 );
 
 async function main() {
+  console.log("userWalletAddress:", userWalletAddress);
+  console.log("offerAmount:", offerAmount);
   const txParams = await router.getSwapTonToJettonTxParams({
-    userWalletAddress,
+    userWalletAddress: "UQCQNMglcI2q0aSMGTubOfCxpwaMM2q3Yyukql73euO2kOBw",
     proxyTon,
     offerAmount: toNano(offerAmount),
     askJettonAddress: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs",
