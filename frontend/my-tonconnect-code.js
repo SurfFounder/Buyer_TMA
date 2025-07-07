@@ -56,7 +56,50 @@ btn.onclick = () => {
     tonConnectUI.openModal();
 };
 
-sendTxBtn.onclick = () => {
-    alert('В будущем здесь будет отправка транзакции!');
+sendTxBtn.onclick = async () => {
+    const amount = usdtAmountInput.value;
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+        alert("Введите сумму TON для обмена");
+        return;
+    }
+    if (!tonConnectUI || !tonConnectUI.account || !tonConnectUI.account.address) {
+        alert("Сначала подключите TON кошелек");
+        return;
+    }
+    sendTxBtn.disabled = true;
+    sendTxBtn.innerText = 'Обработка...';
+    try {
+        const rawAddress = tonConnectUI.account.address;
+        // Получаем параметры swap с backend
+        const resp = await fetch("http://localhost:8000/swap/ton-to-jetton", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_address: rawAddress,
+                amount: amount
+            })
+        });
+        const txParams = await resp.json();
+        if (txParams.error) {
+            alert("Ошибка: " + txParams.error);
+            return;
+        }
+        // Отправляем транзакцию через TonConnect
+        tonConnectUI.sendTransaction({
+            validUntil: Math.floor(Date.now() / 1000) + 60,
+            messages: [
+                {
+                    address: txParams.to,
+                    amount: txParams.value,
+                    payload: txParams.payload,
+                }
+            ]
+        });
+    } catch (e) {
+        alert("Ошибка при обмене: " + e.message);
+    } finally {
+        sendTxBtn.disabled = false;
+        sendTxBtn.innerText = 'Отправить USDT';
+    }
 };
 }); 
