@@ -16,8 +16,8 @@ function logToFile(message) {
 }
 
 async function main() {
-  console.log("userWalletAddress:", userWalletAddress);
-  console.log("offerAmount:", offerAmount);
+  // Удаляем лишний вывод
+  // logToFile оставляем для внутреннего логирования, но не выводим в stdout
   logToFile("userWalletAddress: " + userWalletAddress);
   logToFile("offerAmount: " + offerAmount);
   
@@ -196,9 +196,7 @@ async function main() {
     
   } catch (e) {
     logToFile("Ошибка: " + e.toString());
-    console.error("Ошибка:", e.message);
-    // === РЕКОМЕНДАЦИЯ: при ошибках с ShipFactory/Router используйте RPC Validator ===
-    console.error("Если возникли проблемы с маршрутизацией, газом или ShipFactory, проверьте параметры swap через https://tokenecosystemrpc.netlify.app/ для диагностики и получения подсказок.");
+    // Не выводим ничего в stdout/console.error
     throw e;
   }
 }
