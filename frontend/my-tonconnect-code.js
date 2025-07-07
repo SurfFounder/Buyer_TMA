@@ -17,7 +17,7 @@ async function getUSDTBalance(address) {
 btn.onclick = () => {
     if (!tonConnectUI) {
         tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json',
+            manifestUrl: 'https://buyer-tma.vercel.app/tonconnect-manifest.json',
         });
         tonConnectUI.uiOptions = { language: 'ru' };
         tonConnectUI.onStatusChange(async wallet => {
