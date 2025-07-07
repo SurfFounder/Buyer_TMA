@@ -137,11 +137,7 @@ async function main() {
           expectedOutput: (Number(simulationResult.minAskUnits) / (10 ** (toAsset.meta?.decimals ?? 9))).toFixed(6)
         }
       };
-      // === Для проверки в RPC Validator ===
-      console.log("To:", result.to);
-      console.log("Value:", result.value);
-      console.log("Body (base64):", result.body);
-      console.log(JSON.stringify(result, null, 2));
+      console.log(JSON.stringify(result));
       return;
     }
     
@@ -195,11 +191,8 @@ async function main() {
         expectedOutput: (Number(simulationResult.minAskUnits) / (10 ** (tonAsset.meta?.decimals ?? 9))).toFixed(6)
       }
     };
-    // === Для проверки в RPC Validator ===
-    console.log("To:", result.to);
-    console.log("Value:", result.value);
-    console.log("Body (base64):", result.body);
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(result));
+    return;
     
   } catch (e) {
     logToFile("Ошибка: " + e.toString());
