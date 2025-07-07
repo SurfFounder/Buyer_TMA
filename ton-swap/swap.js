@@ -16,7 +16,8 @@ const router = client.open(
 );
 
 console.log("pTON:", pTON); // Диагностика структуры pTON
-const proxyTon = pTON.v2_1.create("kQACS30DNoUQ7NfApPvzh7eBmSZ9L4ygJ-lkNWtba8TQT-Px");
+console.log("pTON_VERSION:", pTON_VERSION); // Диагностика pTON_VERSION
+const proxyTon = pTON.v1.create("kQACS30DNoUQ7NfApPvzh7eBmSZ9L4ygJ-lkNWtba8TQT-Px");
 
 function logToFile(message) {
   fs.appendFileSync("swap.log", `[${new Date().toISOString()}] ${message}\n`);
