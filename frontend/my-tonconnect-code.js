@@ -5,7 +5,9 @@ let tonConnectUI;
 
 async function getUSDTBalance(address) {
     const response = await fetch(`https://tonapi.io/v2/accounts/${address}/jettons`);
+    if (!response.ok) return "Ошибка API";
     const data = await response.json();
+    if (!data.balances) return "Нет данных";
     const usdtJettonAddress = "EQCkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
     const usdt = data.balances.find(j => j.jetton.address === usdtJettonAddress);
     if (usdt) {
@@ -14,15 +16,12 @@ async function getUSDTBalance(address) {
     return "0";
 }
 
-// Функция для конвертации TON-адреса из hex (0:...) в base64 (user-friendly)
-function hexToBase64(address) {
-    // Удаляем 0x если есть
+// Функция для конвертации TON-адреса из hex (0:...) в base64url (user-friendly)
+function hexToBase64Url(address) {
     address = address.replace(/^0x/, '');
-    // Разделяем workchain и адрес
     const [wc, hex] = address.split(":");
     const wcNum = parseInt(wc, 10);
     const hexStr = hex.length === 64 ? hex : hex.padStart(64, '0');
-    // Собираем байты
     const bytes = new Uint8Array(34);
     bytes[0] = wcNum < 0 ? 0xff : wcNum;
     for (let i = 0; i < 32; i++) {
@@ -44,8 +43,10 @@ function hexToBase64(address) {
     const crc = crc16(bytes.slice(0, 33));
     bytes[33] = crc >> 8;
     bytes[34] = crc & 0xff;
-    // base64
-    return btoa(String.fromCharCode.apply(null, bytes));
+    // base64url
+    let b64 = btoa(String.fromCharCode.apply(null, bytes));
+    b64 = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return b64;
 }
 
 btn.onclick = () => {
@@ -56,8 +57,8 @@ btn.onclick = () => {
         tonConnectUI.uiOptions = { language: 'ru' };
         tonConnectUI.onStatusChange(async wallet => {
             if (wallet && wallet.account) {
-                // Преобразуем адрес в base64
-                const base64Address = hexToBase64(wallet.account.address);
+                // Преобразуем адрес в base64url
+                const base64Address = hexToBase64Url(wallet.account.address);
                 walletDiv.innerText = 'Адрес: ' + base64Address + '\nЗагрузка баланса...';
                 const balance = await getUSDTBalance(base64Address);
                 walletDiv.innerText = `Адрес: ${base64Address}\nUSDT: ${balance}`;
