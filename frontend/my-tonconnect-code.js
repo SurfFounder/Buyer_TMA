@@ -16,6 +16,17 @@ async function getUSDTBalance(address) {
     return "0";
 }
 
+// Функция для конвертации raw TON-адреса в user-friendly с помощью tonweb
+function toUserFriendly(address) {
+    // address: '0:...' (raw)
+    try {
+        // TonWeb.Address.toString(true, true, false) => non-bounceable, user-friendly, url-safe
+        return TonWeb.Address(address).toString(true, true, false);
+    } catch (e) {
+        return address;
+    }
+}
+
 btn.onclick = () => {
     if (!tonConnectUI) {
         tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -24,11 +35,12 @@ btn.onclick = () => {
         tonConnectUI.uiOptions = { language: 'ru' };
         tonConnectUI.onStatusChange(async wallet => {
             if (wallet && wallet.account) {
-                // Используем адрес напрямую, если он уже user-friendly (обычно так и есть)
+                // Преобразуем raw-адрес в user-friendly для отображения
                 const address = wallet.account.address;
-                walletDiv.innerText = 'Адрес: ' + address + '\nЗагрузка баланса...';
-                const balance = await getUSDTBalance(address);
-                walletDiv.innerText = `Адрес: ${address}\nUSDT: ${balance}`;
+                const userFriendly = toUserFriendly(address);
+                walletDiv.innerText = 'Адрес: ' + userFriendly + '\nЗагрузка баланса...';
+                const balance = await getUSDTBalance(userFriendly);
+                walletDiv.innerText = `Адрес: ${userFriendly}\nUSDT: ${balance}`;
             } else {
                 walletDiv.innerText = '';
             }
