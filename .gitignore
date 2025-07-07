@@ -1,0 +1,22 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# VSCode settings
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Node modules (если вдруг появятся)
+node_modules/
+
+# Логи
+*.log 
