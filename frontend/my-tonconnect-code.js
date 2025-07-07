@@ -16,16 +16,20 @@ async function getUSDTBalance(address) {
     return "0";
 }
 
-// Функция для конвертации TON-адреса из hex (0:...) в base64url (user-friendly)
-function hexToBase64Url(address) {
+// Функция для конвертации TON-адреса из hex (0:...) в user-friendly (base64url, 36 байт)
+function hexToUserFriendly(address) {
     address = address.replace(/^0x/, '');
     const [wc, hex] = address.split(":");
     const wcNum = parseInt(wc, 10);
     const hexStr = hex.length === 64 ? hex : hex.padStart(64, '0');
-    const bytes = new Uint8Array(34);
-    bytes[0] = wcNum < 0 ? 0xff : wcNum;
+    const bytes = new Uint8Array(36);
+    // Tag: 0x11 (bounceable, non-testnet, no anycast)
+    bytes[0] = 0x11;
+    // Workchain
+    bytes[1] = wcNum < 0 ? 0xff : wcNum;
+    // Address
     for (let i = 0; i < 32; i++) {
-        bytes[i + 1] = parseInt(hexStr.substr(i * 2, 2), 16);
+        bytes[i + 2] = parseInt(hexStr.substr(i * 2, 2), 16);
     }
     // CRC16
     function crc16(data) {
@@ -40,9 +44,9 @@ function hexToBase64Url(address) {
         }
         return crc;
     }
-    const crc = crc16(bytes.slice(0, 33));
-    bytes[33] = crc >> 8;
-    bytes[34] = crc & 0xff;
+    const crc = crc16(bytes.slice(0, 34));
+    bytes[34] = crc >> 8;
+    bytes[35] = crc & 0xff;
     // base64url
     let b64 = btoa(String.fromCharCode.apply(null, bytes));
     b64 = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -57,11 +61,11 @@ btn.onclick = () => {
         tonConnectUI.uiOptions = { language: 'ru' };
         tonConnectUI.onStatusChange(async wallet => {
             if (wallet && wallet.account) {
-                // Преобразуем адрес в base64url
-                const base64Address = hexToBase64Url(wallet.account.address);
-                walletDiv.innerText = 'Адрес: ' + base64Address + '\nЗагрузка баланса...';
-                const balance = await getUSDTBalance(base64Address);
-                walletDiv.innerText = `Адрес: ${base64Address}\nUSDT: ${balance}`;
+                // Преобразуем адрес в user-friendly base64url
+                const userFriendlyAddress = hexToUserFriendly(wallet.account.address);
+                walletDiv.innerText = 'Адрес: ' + userFriendlyAddress + '\nЗагрузка баланса...';
+                const balance = await getUSDTBalance(userFriendlyAddress);
+                walletDiv.innerText = `Адрес: ${userFriendlyAddress}\nUSDT: ${balance}`;
             } else {
                 walletDiv.innerText = '';
             }
