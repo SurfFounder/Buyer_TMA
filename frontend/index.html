@@ -4,12 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TON Connect Telegram Mini App</title>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
     <h2>TON Connect Telegram Mini App</h2>
     <button id="ton-connect-btn">Подключить TON кошелек</button>
     <div id="wallet-address"></div>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="tonconnect.js"></script>
+    <script>
+        const btn = document.getElementById('ton-connect-btn');
+        const walletDiv = document.getElementById('wallet-address');
+
+        let tonConnectUI;
+
+        btn.onclick = () => {
+            if (!tonConnectUI) {
+                tonConnectUI = new TonConnectUI.TonConnectUI({
+                    manifestUrl: 'https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json',
+                });
+                tonConnectUI.uiOptions = { language: 'ru' };
+                tonConnectUI.onStatusChange(wallet => {
+                    if (wallet && wallet.account) {
+                        walletDiv.innerText = 'Адрес: ' + wallet.account.address;
+                    } else {
+                        walletDiv.innerText = '';
+                    }
+                });
+            }
+            tonConnectUI.openModal();
+        };
+    </script>
 </body>
 </html> 
