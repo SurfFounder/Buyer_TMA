@@ -23,8 +23,8 @@ function hexToUserFriendly(address) {
     const wcNum = parseInt(wc, 10);
     const hexStr = hex.length === 64 ? hex : hex.padStart(64, '0');
     const bytes = new Uint8Array(36);
-    // Tag: 0x11 (bounceable, non-testnet, no anycast)
-    bytes[0] = 0x11;
+    // Tag: 0x51 (non-bounceable, non-testnet, no anycast)
+    bytes[0] = 0x51;
     // Workchain
     bytes[1] = wcNum < 0 ? 0xff : wcNum;
     // Address
