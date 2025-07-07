@@ -20,8 +20,8 @@ async function getUSDTBalance(address) {
 function toUserFriendly(address) {
     // address: '0:...' (raw)
     try {
-        // TonWeb.Address.toString(true, true, false) => non-bounceable, user-friendly, url-safe
-        return TonWeb.Address(address).toString(true, true, false);
+        // new TonWeb.Address(...).toString(true, true, false) => non-bounceable, user-friendly, url-safe
+        return new TonWeb.Address(address).toString(true, true, false);
     } catch (e) {
         return address;
     }
