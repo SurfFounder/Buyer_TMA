@@ -29,14 +29,18 @@ async function main() {
   logToFile("userWalletAddress: " + userWalletAddress);
   logToFile("offerAmount: " + offerAmount);
   try {
-    const txParams = await router.getSwapTonToJettonTxParams({
-      userWalletAddress,
-      proxyTon,
-      offerAmount: toNano(offerAmount),
-      askJettonAddress: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs",
-      minAskAmount: "1",
-      queryId: 12345,
-    });
+    const provider = client.provider();
+    const txParams = await router.getSwapTonToJettonTxParams(
+      provider,
+      {
+        userWalletAddress,
+        proxyTon,
+        offerAmount: toNano(offerAmount),
+        askJettonAddress: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs",
+        minAskAmount: "1",
+        queryId: 12345,
+      }
+    );
     logToFile("Swap params успешно получены");
     // Выводим параметры в формате JSON для backend
     console.log(JSON.stringify(txParams));
