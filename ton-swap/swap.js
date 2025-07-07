@@ -28,6 +28,7 @@ async function main() {
   logToFile("offerAmount: " + offerAmount);
   try {
     const provider = client.provider();
+    console.log("proxyTon:", proxyTon);
     const txParams = await router.getSwapTonToJettonTxParams(
       provider,
       {
