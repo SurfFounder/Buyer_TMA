@@ -145,14 +145,14 @@ async function main() {
       return;
     }
     
-    // 4. Конвертируем amount в правильные единицы
-    const tonDecimals = 10 ** (tonAsset.meta?.decimals ?? 9);
-    const offerUnits = (Number(offerAmount) * tonDecimals).toString();
+    // 4. Конвертируем amount в правильные единицы (USDT)
+    const usdtDecimals = 10 ** (usdtAsset.meta?.decimals ?? 6);
+    const offerUnits = (Number(offerAmount) * usdtDecimals).toString();
     
-    // 5. Симулируем swap
+    // 5. Симулируем swap USDT -> TON
     const simulationResult = await client.simulateSwap({
-      offerAddress: tonAsset.contractAddress,
-      askAddress: usdtAsset.contractAddress,
+      offerAddress: usdtAsset.contractAddress, // USDT
+      askAddress: tonAsset.contractAddress,    // TON
       slippageTolerance: '0.01', // 1% slippage
       offerUnits,
     });
@@ -170,12 +170,12 @@ async function main() {
       dexContracts.Router.create(routerMetadata.address)
     );
     
-    // 9. Получаем параметры транзакции для swap TON -> Jetton
-    const txParams = await router.getSwapTonToJettonTxParams({
+    // 9. Получаем параметры транзакции для swap Jetton -> TON
+    const txParams = await router.getSwapJettonToTonTxParams({
       userWalletAddress,
       proxyTon: dexContracts.pTON.create(routerMetadata.ptonMasterAddress),
+      offerJettonAddress: simulationResult.offerAddress,
       offerAmount: simulationResult.offerUnits,
-      askJettonAddress: simulationResult.askAddress,
       minAskAmount: simulationResult.minAskUnits,
     });
     
@@ -190,9 +190,9 @@ async function main() {
         offerUnits: simulationResult.offerUnits,
         minAskUnits: simulationResult.minAskUnits,
         routerAddress: simulationResult.routerAddress,
-        fromAsset: tonAsset.meta?.symbol || tonAsset.kind,
-        toAsset: usdtAsset.meta?.symbol || usdtAsset.meta?.displayName,
-        expectedOutput: (Number(simulationResult.minAskUnits) / (10 ** (usdtAsset.meta?.decimals ?? 6))).toFixed(6)
+        fromAsset: usdtAsset.meta?.symbol || usdtAsset.meta?.displayName,
+        toAsset: tonAsset.meta?.symbol || tonAsset.kind,
+        expectedOutput: (Number(simulationResult.minAskUnits) / (10 ** (tonAsset.meta?.decimals ?? 9))).toFixed(6)
       }
     };
     // === Для проверки в RPC Validator ===

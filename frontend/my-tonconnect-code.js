@@ -59,7 +59,7 @@ btn.onclick = () => {
 sendTxBtn.onclick = async () => {
     const amount = usdtAmountInput.value;
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
-        alert("Введите сумму TON для обмена");
+        alert("Введите сумму USDT для обмена");
         return;
     }
     if (!tonConnectUI || !tonConnectUI.account || !tonConnectUI.account.address) {
@@ -71,7 +71,7 @@ sendTxBtn.onclick = async () => {
     try {
         const rawAddress = tonConnectUI.account.address;
         // Получаем параметры swap с backend
-        const resp = await fetch("http://localhost:8000/swap/ton-to-jetton", {
+        const resp = await fetch("http://localhost:8000/swap/jetton-to-ton", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -91,7 +91,7 @@ sendTxBtn.onclick = async () => {
                 {
                     address: txParams.to,
                     amount: txParams.value,
-                    payload: txParams.payload,
+                    payload: txParams.body,
                 }
             ]
         });
