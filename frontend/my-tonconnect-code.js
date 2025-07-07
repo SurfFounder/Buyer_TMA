@@ -10,10 +10,10 @@ async function getUSDTBalance(address) {
     const data = await response.json();
     console.log('TONAPI RESPONSE:', data);
     if (!data.balances) return "Нет данных";
-    const usdtJettonAddress = "EQCkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
+    const usdtJettonAddress = "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe";
     const usdt = data.balances.find(j => j.jetton.address === usdtJettonAddress);
     if (usdt) {
-        return (parseInt(usdt.balance) / 1e9).toLocaleString('en-US', {maximumFractionDigits: 2});
+        return (parseInt(usdt.balance) / Math.pow(10, usdt.jetton.decimals)).toLocaleString('en-US', {maximumFractionDigits: 2});
     }
     return "0";
 }
