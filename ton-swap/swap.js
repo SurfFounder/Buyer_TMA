@@ -1,4 +1,5 @@
-import { TonClient, toNano, Address } from "@ton/ton";
+import { TonClient, WalletContractV4, internal, toNano, Address } from "@ton/ton";
+import { mnemonicToWalletKey } from "@ton/crypto";
 import { dexFactory, Client } from "@ston-fi/sdk";
 import { StonApiClient, AssetTag } from '@ston-fi/api';
 import fs from "fs";
@@ -10,6 +11,34 @@ const offerAmount = process.argv[3];
 const tonApiClient = new Client({
   endpoint: "https://toncenter.com/api/v2/jsonRPC",
 });
+
+// Адрес вашего DCA_Pool контракта
+const DCA_POOL_ADDRESS = "<ВАШ_АДРЕС_КОНТРАКТА>"; // замените на ваш адрес
+
+async function callSwapUSDTtoTON(userAddress, amountUSDT, minTON, mnemonic) {
+  const client = new TonClient({ endpoint: "https://toncenter.com/api/v2/jsonRPC" });
+  const key = await mnemonicToWalletKey(mnemonic.split(" "));
+  const wallet = WalletContractV4.create({ workchain: 0, publicKey: key.publicKey });
+  const seqno = await client.getSeqno(wallet.address);
+
+  // Формируем payload для swapUSDTtoTON (user, amount, minTON)
+  // Здесь нужно сериализовать параметры в Cell/BOC для Tact
+  // Пример (упрощённо):
+  const payload = Buffer.concat([
+    Buffer.from("swapUSDTtoTON"),
+    Buffer.from(Address.parse(userAddress).toRawBuffer()),
+    Buffer.from(amountUSDT.toString(16).padStart(16, '0'), 'hex'),
+    Buffer.from(minTON.toString(16).padStart(16, '0'), 'hex'),
+  ]);
+
+  const transfer = internal({
+    to: Address.parse(DCA_POOL_ADDRESS),
+    value: toNano("0.1"), // комиссия
+    body: payload,
+  });
+
+  await client.sendExternalMessage(wallet, transfer, key.secretKey);
+}
 
 function logToFile(message) {
   fs.appendFileSync("swap.log", `[${new Date().toISOString()}] ${message}\n`);
